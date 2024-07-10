@@ -4,7 +4,7 @@ npx prisma init
 npx prisma db pull
 npx prisma generate
 
-//GitHub - Ramas
+//GitHub: Commits
 git pull origin main   # Integra los cambios remotos
 # Resuelve cualquier conflicto si es necesario
 git add .              # Agrega los cambios resueltos

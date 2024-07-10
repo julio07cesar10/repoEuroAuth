@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model EAU_APP {
+  APP_IDAPP               Int              @id(map: "PK__EAU_APP__DA26341CCA184618") @default(autoincrement())
+  APP_NOMBRE              String           @db.VarChar(100)
+  AUD_ESTADO              Int?             @default(1, map: "DF__EAU_APP__AUD_EST__300424B4")
+  AUD_USUARIOCREACION     String?          @db.VarChar(50)
+  AUD_FECHACREACION       DateTime?        @default(now(), map: "DF__EAU_APP__AUD_FEC__30F848ED") @db.DateTime
+  AUD_USUARIOMODIFICACION String?          @db.VarChar(50)
+  AUD_FECHAMODIFICACION   DateTime?        @db.DateTime
+  AUD_USUARIOELIMINACION  String?          @db.VarChar(50)
+  AUD_FECHAELEMINACION    DateTime?        @db.DateTime
+  EAU_CREDENCIAL          EAU_CREDENCIAL[]
+}
+
+model EAU_CREDENCIAL {
+  CRD_IDCREDENCIAL           Int                          @id(map: "PK__EAU_CRED__B82E53E38FEEE7EF") @default(autoincrement())
+  APP_IDAPP                  Int
+  CRD_ENDPOINT               String                       @db.VarChar(100)
+  CRD_CLIENT_SECRET          String                       @db.VarChar(100)
+  CRD_CLIENT_ID              String                       @db.VarChar(100)
+  CRD_TIEMPO_EXPIRACION      Int
+  AUD_ESTADO                 Int?                         @default(1, map: "DF__EAU_CREDE__AUD_E__37A5467C")
+  AUD_USUARIOCREACION        String?                      @db.VarChar(50)
+  AUD_FECHACREACION          DateTime?                    @default(now(), map: "DF__EAU_CREDE__AUD_F__38996AB5") @db.DateTime
+  AUD_USUARIOMODIFICACION    String?                      @db.VarChar(50)
+  AUD_FECHAMODIFICACION      DateTime?                    @db.DateTime
+  AUD_USUARIOELIMINACION     String?                      @db.VarChar(50)
+  AUD_FECHAELEMINACION       DateTime?                    @db.DateTime
+  EAU_APP                    EAU_APP                      @relation(fields: [APP_IDAPP], references: [APP_IDAPP], onUpdate: NoAction, map: "FK__EAU_CREDE__APP_I__398D8EEE")
+  EAU_DET_CREDENCIAL_PERMISO EAU_DET_CREDENCIAL_PERMISO[]
+  EAU_TOKEN                  EAU_TOKEN[]
+}
+
+model EAU_DET_CREDENCIAL_PERMISO {
+  CRD_IDCREDENCIAL        Int
+  PRM_IDPERMISO           Int
+  AUD_ESTADO              Int?           @default(1, map: "DF__EAU_DET_C__AUD_E__412EB0B6")
+  AUD_USUARIOCREACION     String?        @db.VarChar(50)
+  AUD_FECHACREACION       DateTime?      @default(now(), map: "DF__EAU_DET_C__AUD_F__4222D4EF") @db.DateTime
+  AUD_USUARIOMODIFICACION String?        @db.VarChar(50)
+  AUD_FECHAMODIFICACION   DateTime?      @db.DateTime
+  AUD_USUARIOELIMINACION  String?        @db.VarChar(50)
+  AUD_FECHAELEMINACION    DateTime?      @db.DateTime
+  EAU_CREDENCIAL          EAU_CREDENCIAL @relation(fields: [CRD_IDCREDENCIAL], references: [CRD_IDCREDENCIAL], onUpdate: NoAction, map: "FK__EAU_DET_C__CRD_I__4316F928")
+  EAU_PERMISO             EAU_PERMISO    @relation(fields: [PRM_IDPERMISO], references: [PRM_IDPERMISO], onUpdate: NoAction, map: "FK__EAU_DET_C__PRM_I__440B1D61")
+
+  @@id([CRD_IDCREDENCIAL, PRM_IDPERMISO], map: "PK__EAU_DET___66B5721E70BA62DD")
+}
+
+model EAU_LOG {
+  LOG_IDLOG               Int       @id(map: "PK__EAU_LOG__5CDE0386FB49C713") @default(autoincrement())
+  TKN_IDTOKEN             Int
+  LOG_ENTIDAD             String    @db.VarChar(255)
+  LOG_ACCION              String    @db.VarChar(255)
+  LOG_OBJETO_ORIGEN       String    @db.VarChar(Max)
+  LOG_OBJETO_RESPUESTA    String    @db.VarChar(Max)
+  AUD_ESTADO              Int?      @default(1, map: "DF__EAU_LOG__AUD_EST__46E78A0C")
+  AUD_USUARIOCREACION     String?   @db.VarChar(50)
+  AUD_FECHACREACION       DateTime? @default(now(), map: "DF__EAU_LOG__AUD_FEC__47DBAE45") @db.DateTime
+  AUD_USUARIOMODIFICACION String?   @db.VarChar(50)
+  AUD_FECHAMODIFICACION   DateTime? @db.DateTime
+  AUD_USUARIOELIMINACION  String?   @db.VarChar(50)
+  AUD_FECHAELEMINACION    DateTime? @db.DateTime
+  EAU_TOKEN               EAU_TOKEN @relation(fields: [TKN_IDTOKEN], references: [TKN_IDTOKEN], onUpdate: NoAction, map: "FK__EAU_LOG__TKN_IDT__48CFD27E")
+}
+
+model EAU_PERMISO {
+  PRM_IDPERMISO              Int                          @id(map: "PK__EAU_PERM__E9B21FDC73942312") @default(autoincrement())
+  PRM_NOMBRE                 String                       @db.VarChar(100)
+  AUD_ESTADO                 Int?                         @default(1, map: "DF__EAU_PERMI__AUD_E__33D4B598")
+  AUD_USUARIOCREACION        String?                      @db.VarChar(50)
+  AUD_FECHACREACION          DateTime?                    @default(now(), map: "DF__EAU_PERMI__AUD_F__34C8D9D1") @db.DateTime
+  AUD_USUARIOMODIFICACION    String?                      @db.VarChar(50)
+  AUD_FECHAMODIFICACION      DateTime?                    @db.DateTime
+  AUD_USUARIOELIMINACION     String?                      @db.VarChar(50)
+  AUD_FECHAELEMINACION       DateTime?                    @db.DateTime
+  EAU_DET_CREDENCIAL_PERMISO EAU_DET_CREDENCIAL_PERMISO[]
+}
+
+model EAU_TOKEN {
+  TKN_IDTOKEN             Int            @id(map: "PK__EAU_TOKE__50A2113350FFD9A6") @default(autoincrement())
+  CRD_IDCREDENCIAL        Int
+  TKN_TOKEN               String         @db.VarChar(255)
+  TKN_FECHA_VENCIMIENTO   DateTime       @db.DateTime
+  AUD_ESTADO              Int?           @default(1, map: "DF__EAU_TOKEN__AUD_E__3C69FB99")
+  AUD_USUARIOCREACION     String?        @db.VarChar(50)
+  AUD_FECHACREACION       DateTime?      @default(now(), map: "DF__EAU_TOKEN__AUD_F__3D5E1FD2") @db.DateTime
+  AUD_USUARIOMODIFICACION String?        @db.VarChar(50)
+  AUD_FECHAMODIFICACION   DateTime?      @db.DateTime
+  AUD_USUARIOELIMINACION  String?        @db.VarChar(50)
+  AUD_FECHAELEMINACION    DateTime?      @db.DateTime
+  EAU_LOG                 EAU_LOG[]
+  EAU_CREDENCIAL          EAU_CREDENCIAL @relation(fields: [CRD_IDCREDENCIAL], references: [CRD_IDCREDENCIAL], onUpdate: NoAction, map: "FK__EAU_TOKEN__CRD_I__3E52440B")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
